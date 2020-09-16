@@ -85,7 +85,7 @@ Do_It:
     parse value stdout.tline with size .
     if size < 100 then size = 100
     else size = size % 10
-    parms = 'pax -W',
+    parms = 'pax -x pax -W',
        '"seqparms='"'SPACE=(TRK,("size","size")),BLKSIZE=32720'"'" -wzvf'
     cmd = 'cd' omvsdir ';'parms '"//'zobkdsn'" .'
     x = bpxwunix(cmd,,stdout.,stderr.)
