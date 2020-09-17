@@ -13,8 +13,10 @@ The dialogs are:
 To invoke the dialogs:
 
     1. Must be under ISPF
-    2. From ISPF 6 enter %OMVSPAX?   Where ? is B/L/R
-    3. From any ISPF command line enter:  TSO %OMVSPAX?
+    2. Copy the elements into appropriate libraries in your
+       ISPF library concatenation
+    3. From ISPF 6 enter %OMVSPAX?   Where ? is B/L/R
+    4. From any ISPF command line enter:  TSO %OMVSPAX?
        or TSO %OMVSPAX (for the menu)
 
 Dependencies:
