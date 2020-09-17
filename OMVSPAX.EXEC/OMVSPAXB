@@ -30,55 +30,55 @@
 /* --------------- *
  * Define defaults *
  * --------------- */
- null = ''
- Address ISPExec
+  null = ''
+  Address ISPExec
 
 /* ------------------------------- *
  * Get the users home directory to *
  * prime the backup panel.         *
  * ------------------------------- */
- cmd = 'pwd'
- rc = bpxwunix(cmd,,stdout.,stderr.)
- omvsdir = strip(stdout.1)
+  cmd = 'pwd'
+  rc = bpxwunix(cmd,,stdout.,stderr.)
+  omvsdir = strip(stdout.1)
 
 /* ------------------------------------ *
  * Display the panel prompting for info *
  * ------------------------------------ */
- do forever
+  do forever
     "Display Panel(OMVSPAXB)"
-    if rc >4 then leave
+    if rc > 3 then leave
     call do_it
-    end
- Exit 0
+  end
+  Exit 0
 
 Do_It:
 /* ------------- *
  * Test for info *
  * ------------- */
- zedsmsg = null
- if zobkdsn /= null then
-    if 'OK' = sysdsn(zobkdsn) then do
-       zedsmsg = 'Error'
-       zedlmsg = zobkdsn 'currently exists.  Specify a different' ,
-                 'z/OS dataset name.'
-      'setmsg msg(isrz001)'
-      end
- 'vput (zobkdsn) profile'
+  zedsmsg = null
+  if zobkdsn /= null then
+  if 'OK' = sysdsn(zobkdsn) then do
+    zedsmsg = 'Error'
+    zedlmsg = zobkdsn 'currently exists.  Specify a different' ,
+      'z/OS dataset name.'
+    'setmsg msg(isrz001)'
+  end
+  'vput (zobkdsn) profile'
 
 /* ----------------------------------------------- *
  * Test to validate that the omvs directory exists *
  * ----------------------------------------------- */
- cmd = 'ls -la' omvsdir
- drop stdout. stedrr.
- rc = bpxwunix(cmd,,stdout.,stderr.)
- if rc > 0 then do
+  cmd = 'ls -la' omvsdir
+  drop stdout. stedrr.
+  rc = bpxwunix(cmd,,stdout.,stderr.)
+  if rc > 0 then do
     zedsmsg = 'Error'
     zedlmsg = stderr.1
     'setmsg msg(isrz001)'
     return
-    end
+  end
 
- if zedsmsg = null then do
+  if zedsmsg = null then do
     /* get space used first */
     x = bpxwunix('cd' omvsdir';du -k .',,stdout.,stderr.)
     tline = stdout.0
@@ -86,14 +86,22 @@ Do_It:
     if size < 100 then size = 100
     else size = size % 10
     parms = 'pax -x pax -W',
-       '"seqparms='"'SPACE=(TRK,("size","size")),BLKSIZE=32720'"'" -wzvf'
-    cmd = 'cd' omvsdir ';'parms '"//'zobkdsn'" .'
+      '"seqparms='"'SPACE=(TRK,("size","size")),BLKSIZE=32720'"'" -wzvf'
+    cmd = 'cd' omvsdir '&& 'parms '"//'zobkdsn'" .'
+    call dopop
     x = bpxwunix(cmd,,stdout.,stderr.)
     if stdout.0 > 0 then
-       CALL stemview 'Browse','stdout.',,,"Backup"
+    CALL stemview 'Browse','stdout.',,,"Backup"
     /* the pax output goes to stderr. for some reason */
     if stderr.0 > 0 then
-       CALL stemview 'Browse','stderr.',,,"Backup"
-    end
+    CALL stemview 'Browse','stderr.',,,"Backup"
+  end
 
- return
+  return
+
+DoPOP:
+  'Control Display Lock'
+  'Addpop'
+  'Display Panel(omvspaxp)'
+  'Rempop'
+  return
