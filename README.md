@@ -1,5 +1,6 @@
-OMVSPAX is a package of three small ISPF dialogs written in REXX to
-simplify the backup and restoration of a omvs directory.
+OMVSPAX is a package of three small ISPF dialogs written in
+REXX to simplify the backup and restoration of a omvs
+directory.
 
 The dialogs are:
 
